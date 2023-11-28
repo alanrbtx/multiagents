@@ -1,5 +1,5 @@
 import pytorch_lightning as pl
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import PeftModel
 import torch
 from collections import namedtuple
@@ -13,8 +13,19 @@ class LLMAgent(pl.LightningModule):
 
     def __init__(self, args):
         super().__init__()
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True
+        )
+       
         self.args = args
-        self.model = AutoModelForCausalLM.from_pretrained(self.args.model_name)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.args.model_name, 
+            quantization_config=bnb_config,
+            device_map={":", 0}
+        )
         self._build_agent()
         self._build_tokenizer()
 
