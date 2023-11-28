@@ -39,7 +39,7 @@ class LLMAgent(pl.LightningModule):
             self.peft_model = PeftModel(self.model,peft_config)
         
     def _build_tokenizer(self):
-        self.tokenizer = AutoTokenizer.from_pretrained()
+        self.tokenizer = AutoTokenizer.from_pretrained(self.args.model_name)
         self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
 
     @torch.no_grad()
