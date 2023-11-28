@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from peft import PeftModel
+from peft import PeftModel, PeftConfig
 import torch
 from collections import namedtuple
 import enum
@@ -32,9 +32,11 @@ class LLMAgent(pl.LightningModule):
     def _build_agent(self):
         # Можно прикреплять разные адаптеры
         if self.args.agent_type == "code":
-            self.peft_model = PeftModel(self.model, "AlanRobotics/lab4_code")
+            peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
+            self.peft_model = PeftModel(self.model, peft_config)
         else:
-            self.peft_model = PeftModel(self.model, "AlanRobotics/lab4_chat")
+            peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
+            self.peft_model = PeftModel(self.model,peft_config)
         
     def _build_tokenizer(self):
         self.tokenizer = AutoTokenizer.from_pretrained()
