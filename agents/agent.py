@@ -34,23 +34,23 @@ class LLMAgent(pl.LightningModule):
 
         # Можно прикреплять разные адаптеры
         if self.args.agent_type == "code":
-            self.model = AutoModelForCausalLM.from_pretrained(
+            model = AutoModelForCausalLM.from_pretrained(
                 self.args.model_name, 
                 quantization_config=bnb_config,
                 device_map="auto"
             )
             print("TYPE: CODE")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
-            self.model = PeftModel(self.model, peft_config)
+            self.model = PeftModel(model, peft_config)
         else:
-            self.model = AutoModelForCausalLM.from_pretrained(
+            model = AutoModelForCausalLM.from_pretrained(
                 self.args.model_name, 
                 quantization_config=bnb_config,
                 device_map="auto"
             )
             print("TYPE: CHAT")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
-            self.model = PeftModel(self.model, peft_config)
+            self.model = PeftModel(model, peft_config)
         
     def _build_tokenizer(self):
         self.tokenizer = AutoTokenizer.from_pretrained(self.args.model_name)
