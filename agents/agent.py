@@ -31,14 +31,14 @@ class LLMAgent(pl.LightningModule):
             quantization_config=bnb_config,
             device_map="auto"
         )
-        self._build_agent()
-        self._build_tokenizer()
 
         # Можно прикреплять разные адаптеры
         if self.args.agent_type == "code":
+            print("TYPE: CODE")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
-            self.peft_model = PeftModel(self.model, peft_config)
+            self.model = PeftModel(self.model, peft_config)
         else:
+            print("TYPE: CHAT")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
             self.model = PeftModel(self.model,peft_config)
         
