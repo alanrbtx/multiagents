@@ -61,8 +61,7 @@ class LLMAgent(pl.LightningModule):
 
         tokens = self.model.generate(
             input_ids=input_ids,
-            num_beams=num_return_sequences,
-            temperature=temp,
+            num_beams=num_return_sequences
             
         )
 
