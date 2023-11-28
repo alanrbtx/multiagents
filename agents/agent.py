@@ -13,14 +13,19 @@ class LLMAgent(pl.LightningModule):
 
     def __init__(self, args):
         super().__init__()
+       
+        self.args = args
+        self._build_agent()
+        self._build_tokenizer()
+
+    def _build_agent(self):
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True
         )
-       
-        self.args = args
+
         self.model = AutoModelForCausalLM.from_pretrained(
             self.args.model_name, 
             quantization_config=bnb_config,
@@ -29,7 +34,6 @@ class LLMAgent(pl.LightningModule):
         self._build_agent()
         self._build_tokenizer()
 
-    def _build_agent(self):
         # Можно прикреплять разные адаптеры
         if self.args.agent_type == "code":
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
