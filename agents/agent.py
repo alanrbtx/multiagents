@@ -24,7 +24,7 @@ class LLMAgent(pl.LightningModule):
         self.model = AutoModelForCausalLM.from_pretrained(
             self.args.model_name, 
             quantization_config=bnb_config,
-            device_map="auto"
+            device_map={":", 0}
         )
         self._build_agent()
         self._build_tokenizer()
