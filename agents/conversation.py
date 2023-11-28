@@ -32,7 +32,7 @@ class TwoAgentsCoversation:
             self.context.append(agent2_responce)
             if "SOLVED" in joined_context:
                 break
-        return agent2_responce
+        print(agent2_responce)
     
 
     def show_history(self):
