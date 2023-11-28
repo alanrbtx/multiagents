@@ -36,7 +36,7 @@ class LLMAgent(pl.LightningModule):
             self.peft_model = PeftModel(self.model, peft_config)
         else:
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
-            self.peft_model = PeftModel(self.model,peft_config)
+            self.model = PeftModel(self.model,peft_config)
         
     def _build_tokenizer(self):
         self.tokenizer = AutoTokenizer.from_pretrained(self.args.model_name)
