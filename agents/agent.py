@@ -1,0 +1,61 @@
+import pytorch_lightning as pl
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel
+import torch
+from collections import namedtuple
+import enum
+
+
+class LLMAgent(pl.LightningModule):
+    """
+    LLMAgent class create agent with specific PEFT config
+    """
+
+    def __init__(self, args):
+        super().__init__()
+        self.args = args
+        self.model = AutoModelForCausalLM.from_pretrained(self.args.model_name)
+        self._build_agent()
+        self._build_tokenizer()
+
+    def _build_agent(self):
+        # Можно прикреплять разные адаптеры
+        if self.args.agent_type == "code":
+            self.peft_model = PeftModel(self.model, "AlanRobotics/lab4_code")
+        else:
+            self.peft_model = PeftModel(self.model, "AlanRobotics/lab4_chat")
+        
+    def _build_tokenizer(self):
+        self.tokenizer = AutoTokenizer.from_pretrained()
+        self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+
+    @torch.no_grad()
+    def sample(
+            self,
+            prompt,
+            num_return_sequences=1,
+            temp=0.1,
+            max_new_tokens=128,
+            max_length=1024
+        ):
+        
+        input_ids = self.tokenizer(
+            prompt,
+            max_length=max_length,
+            truncation=True,
+            return_tensors="pt"
+        ).input_ids
+
+        tokens = self.model.generate(
+            input_ids=input_ids,
+            num_beams=num_return_sequences,
+            temperature=temp,
+            
+        )[:max_new_tokens]
+
+        decoded_tokens = self.tokenizer.decode(
+            tokens,
+            skip_special_tokens=True
+        )
+
+        return decoded_tokens
