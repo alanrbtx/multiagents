@@ -64,7 +64,7 @@ class LLMAgent(pl.LightningModule):
             num_beams=num_return_sequences,
             temperature=temp,
             
-        )[len(input_ids):]
+        )
 
         decoded_tokens = self.tokenizer.decode(
             tokens[0],
