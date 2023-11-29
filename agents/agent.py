@@ -19,7 +19,7 @@ class LLMAgent(pl.LightningModule):
         self._build_tokenizer()
 
     def _build_agent(self):
-        if self.args.quantized_model == True:
+        if self.args.quantized == True:
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_compute_dtype=torch.bfloat16,
