@@ -19,24 +19,30 @@ class LLMAgent(pl.LightningModule):
         self._build_tokenizer()
 
     def _build_agent(self):
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True
-        )
+        if self.args.quantized_model == True:
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True
+            )
 
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.args.model_name, 
-            quantization_config=bnb_config,
-            device_map="auto"
-        )
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.args.model_name, 
+                quantization_config=bnb_config,
+                device_map="auto"
+            )
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.args.model_name,
+                torch_dtype=torch.float16,
+                device_map="auto"
+            )
 
-        # Можно прикреплять разные адаптеры
         if self.args.agent_type == "code":
             print("TYPE: CODE")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
-            self.model = PeftModel(self.allow_zero_length_dataloader_with_multiple_devicesmodel, peft_config)
+            self.model = PeftModel(self.model, peft_config)
         else:
             print("TYPE: CHAT")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
