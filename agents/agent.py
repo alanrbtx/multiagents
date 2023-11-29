@@ -15,8 +15,8 @@ class LLMAgent(pl.LightningModule):
         super().__init__()
        
         self.args = args
-        #self._build_agent()
-        self._build_model()
+        self._build_agent()
+        # self._build_model()
         self._build_tokenizer()
 
     def _build_model(self):
@@ -27,7 +27,7 @@ class LLMAgent(pl.LightningModule):
             )
         
         peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
-        self.model = PeftModel(self.model, peft_config)
+        self.model = PeftModel.from_pretrained(self.model, peft_config)
 
 
     def _build_agent(self):
@@ -55,11 +55,11 @@ class LLMAgent(pl.LightningModule):
         if self.args.agent_type == "code":
             print("TYPE: CODE")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
-            self.model = PeftModel(self.model, peft_config)
+            self.model = PeftModel.from_pretrained(self.model, "AlanRobotics/lab4_code")
         else:
             print("TYPE: CHAT")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
-            self.model = PeftModel(self.model, peft_config)
+            self.model = PeftModel.from_pretrained(self.model, "AlanRobotics/lab4_code")
 
         
         
