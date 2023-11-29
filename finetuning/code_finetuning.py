@@ -83,8 +83,8 @@ trainer = Trainer(
 
 trainer.train()
 
-#merged_model = model.merge_and_unload()
+# merged_model = model.merge_and_unload()
 
-#trainer.model.save_pretrained("rugpt_merged_model")
+# trainer.model.save_pretrained("rugpt_merged_model")
 
-model.push_to_hub("lab4_code", token="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")
+model.push_to_hub("lab4_code", token="xxx")
