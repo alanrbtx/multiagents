@@ -59,7 +59,7 @@ class LLMAgent(pl.LightningModule):
         else:
             print("TYPE: CHAT")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
-            self.model = PeftModel.from_pretrained(self.model, "AlanRobotics/lab4_code")
+            self.model = PeftModel.from_pretrained(self.model, "AlanRobotics/lab4_chat")
 
         
         
