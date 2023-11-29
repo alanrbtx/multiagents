@@ -15,8 +15,20 @@ class LLMAgent(pl.LightningModule):
         super().__init__()
        
         self.args = args
-        self._build_agent()
+        #self._build_agent()
+        self._build_model()
         self._build_tokenizer()
+
+    def _build_model(self):
+        self.model = AutoModelForCausalLM.from_pretrained(
+                self.args.model_name,
+                torch_dtype=torch.float16,
+                device_map="auto"
+            )
+        
+        peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_code")
+        self.model = PeftModel(self.model, peft_config)
+
 
     def _build_agent(self):
         if self.args.quantized == True:
@@ -32,6 +44,7 @@ class LLMAgent(pl.LightningModule):
                 quantization_config=bnb_config,
                 device_map="auto"
             )
+            
         else:
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.args.model_name,
@@ -47,6 +60,8 @@ class LLMAgent(pl.LightningModule):
             print("TYPE: CHAT")
             peft_config = PeftConfig.from_pretrained("AlanRobotics/lab4_chat")
             self.model = PeftModel(self.model, peft_config)
+
+        
         
     def _build_tokenizer(self):
         self.tokenizer = AutoTokenizer.from_pretrained(self.args.model_name)
